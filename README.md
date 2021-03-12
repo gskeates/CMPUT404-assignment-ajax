@@ -16,4 +16,4 @@ server.py and index.html are also LICENSE'D under the Apache 2 license by Graeme
 
 Sources
 ========================
-No external code was used, but the code available https://github.com/abramhindle/CMPUT404-AJAX-Slides/tree/master/ObserverExample was consulted to understand how the observer pattern worked.
+No external code was used, but the code available at https://github.com/abramhindle/CMPUT404-AJAX-Slides/tree/master/ObserverExample was consulted to understand how the observer pattern worked.
