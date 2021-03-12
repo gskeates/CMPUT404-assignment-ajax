@@ -32,6 +32,9 @@ var context = canvas.getContext("2d");
 var W = canvas.width  = window.innerWidth-6;
 var H = canvas.height = window.innerHeight-50;
 
+// Generate random ID
+var client_id = Math.floor(Math.random()*2000)
+
 
 function sendJSONXMLHTTPRequest(url, objects, callback) {
     var xhr = new XMLHttpRequest();
@@ -152,6 +155,16 @@ function addEntity(entity, data) {
     sendJSONXMLHTTPRequest(url, object, (response) => {
       // nothing
     });
+}
+
+function register(id) {
+  var url = "http://" + host + "/listener/" + client_id
+  var object = {
+    "method": "PUT"
+  }
+  sendJSONXMLHTTPRequest(url, object, (response) => {
+    // nothing
+  });
 }
 
 var counter = 0;
@@ -275,18 +288,23 @@ mouse.mousedraggers.push(function(x,y,clicked,e) {
 
 function update() {
     //XXX: TODO Get the world from the webservice using a XMLHTTPRequest
-    var url = "http://" + host + "/world";
+    var url = "http://" + host + "/listener/" + client_id;
     var object = {
       "method": "GET"
     }
     sendJSONXMLHTTPRequest(url, object, (response) => {
       // Update world
-      world = response;
+      for (var entity in response) {
+        world[entity] = response[entity]
+      }
       drawNext = true;
     });
-    console.log(world)
+
     drawFrame();
 }
+
+    // Notify server that client is listening
+    register(client_id);
 
     // 30 frames per second
     setInterval( update, 1000/30.0);
