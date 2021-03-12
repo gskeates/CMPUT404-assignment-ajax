@@ -21,10 +21,6 @@
 # remember to:
 #     pip install flask
 
-# 3) Not sending full world every time, < 100ms response time
-# 4) Citations, licensing
-# 5) Test, push changes, submit link to eclass
-
 
 import flask
 from flask import Flask, redirect, request
@@ -50,8 +46,22 @@ class World:
     def set(self, entity, data):
         self.space[entity] = data
 
+        # Notify all listeners
+        for l in self.listeners.keys():
+            self.listeners[l][entity] = data
+
     def clear(self):
         self.space = dict()
+        self.listeners = dict()
+
+    def add_listener(self, id):
+        self.listeners[id] = dict()
+
+    def get_bucket(self, id):
+        return self.listeners[id]
+
+    def clear_bucket(self, id):
+        self.listeners[id] = dict()
 
     def get(self, entity):
         return self.space.get(entity,dict())
@@ -107,8 +117,6 @@ def world():
     '''you should probably return the world here'''
     if request.method == 'POST':
         data = flask_post_json()
-        # Generate new ID
-
 
     return myWorld.world()
 
@@ -118,10 +126,23 @@ def get_entity(entity):
     e = myWorld.get(entity)
     return flask.jsonify(e)
 
+
+@app.route("/listener/<id>", methods=['POST','PUT'])
+def add_listener(id):
+    '''Add a listener'''
+    myWorld.add_listener(id)
+    return flask.jsonify(id)
+
+@app.route("/listener/<id>")
+def get_bucket(id):
+    '''GET listener bucket, return entities that have yet to be sent'''
+    data = myWorld.get_bucket(id)
+    myWorld.clear_bucket(id)
+    return flask.jsonify(data)
+
 @app.route("/clear", methods=['POST','GET'])
 def clear():
     '''Clear the world out!'''
-
     myWorld.clear()
     return myWorld.world()
 
