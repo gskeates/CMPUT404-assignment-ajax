@@ -157,13 +157,23 @@ function addEntity(entity, data) {
     });
 }
 
-function register(id) {
+function register() {
   var url = "http://" + host + "/listener/" + client_id
   var object = {
     "method": "PUT"
   }
   sendJSONXMLHTTPRequest(url, object, (response) => {
     // nothing
+  });
+}
+
+function fetch_world() {
+  var url = "http://" + host + "/world"
+  var object = {
+    "method": "GET"
+  }
+  sendJSONXMLHTTPRequest(url, object, (response) => {
+    world = response;
   });
 }
 
@@ -304,7 +314,9 @@ function update() {
 }
 
     // Notify server that client is listening
-    register(client_id);
+    register();
+    // Get initial state of world
+    fetch_world();
 
     // 30 frames per second
     setInterval( update, 1000/30.0);

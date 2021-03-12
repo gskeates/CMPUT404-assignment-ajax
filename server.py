@@ -50,6 +50,9 @@ class World:
         for l in self.listeners.keys():
             self.listeners[l][entity] = data
 
+    def set_world(self, data):
+        self.space = data
+
     def clear(self):
         self.space = dict()
         self.listeners = dict()
@@ -117,6 +120,7 @@ def world():
     '''you should probably return the world here'''
     if request.method == 'POST':
         data = flask_post_json()
+        myWorld.set_world(data)
 
     return myWorld.world()
 
