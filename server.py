@@ -21,10 +21,9 @@
 # remember to:
 #     pip install flask
 
-# 0.5) How to make it look better?
-# 1) Clean up code, test
-# 2) Forum posts, ensure it still works
 # 3) Not sending full world every time, < 100ms response time
+# 4) Citations, licensing
+# 5) Test, push changes, submit link to eclass
 
 
 import flask
@@ -85,7 +84,12 @@ def hello():
 @app.route("/entity/<entity>", methods=['POST','PUT'])
 def update(entity):
     '''update the entities via this interface'''
-    data = flask_post_json()['body']
+    input_json = flask_post_json()
+    if 'body' in input_json.keys():
+        data = input_json['body']
+    else:
+        data = input_json
+
     if request.method == 'PUT':
         # Set
         myWorld.set(entity, data)
@@ -101,6 +105,11 @@ def update(entity):
 @app.route("/world", methods=['POST','GET'])
 def world():
     '''you should probably return the world here'''
+    if request.method == 'POST':
+        data = flask_post_json()
+        # Generate new ID
+
+
     return myWorld.world()
 
 @app.route("/entity/<entity>")
@@ -112,6 +121,7 @@ def get_entity(entity):
 @app.route("/clear", methods=['POST','GET'])
 def clear():
     '''Clear the world out!'''
+
     myWorld.clear()
     return myWorld.world()
 

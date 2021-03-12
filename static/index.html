@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width" />
     <meta name="license" content="
         Copyright 2013 Abram Hindle
+        Copyright 2021 Graeme Keates
 
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -65,13 +66,13 @@ world = {};
 function drawCircle(context, entity) {
     with(context) {
         beginPath();
-        lineWidth = 3;
+        lineWidth = 2;
         var x = entity["x"];
         var y = entity["y"];
         //moveTo(x,y);
         fillStyle = entity["colour"];
         strokeStyle = fillStyle;
-        arc(x, y, (entity["radius"])?entity["radius"]:50, 0, 2.0 * Math.PI, false);
+        arc(x, y, (entity["radius"]) ? entity["radius"] : 25, 0, 2.0 * Math.PI, false);
         stroke();
     }
 }
@@ -89,7 +90,7 @@ function prepEntity(entity) {
 function clearFrame() {
     with(context) {
     	moveTo(0,0);
-    	fillStyle = "#FFF";
+    	fillStyle = "#000";
     	fillRect(0,0,W,H);
     }
 }
@@ -141,12 +142,12 @@ function getPosition(e) {
 
 function addEntity(entity, data) {
     world[entity] = data;
-    drawNextFrame(); // (but should we?)
+    // drawNextFrame(); // (but should we?)
     //XXX: Send a XHTML Request that updates the entity you just  modified!
     var url = "http://" + host + "/entity/" + entity
     var object = {
       "body": data,
-      "method": "POST"
+      "method": "PUT"
     }
     sendJSONXMLHTTPRequest(url, object, (response) => {
       // nothing
@@ -259,16 +260,16 @@ mouse = (function() {
 // Add the application specific mouse listeners!
 //XXX: TODO Make these prettier!
 mouse.mousedowners.push(function(x,y,clicked,e) {
-    addEntityWithoutName({'x':x,'y':y,'colour':'blue'});
+    addEntityWithoutName({'x':x,'y':y,'colour':'orange'});
 });
 
 mouse.mouseuppers.push(function(x,y,clicked,e) {
-    addEntityWithoutName({'x':x,'y':y,'colour':'red'});
+    addEntityWithoutName({'x':x,'y':y,'colour':'blue'});
 });
 
 mouse.mousedraggers.push(function(x,y,clicked,e) {
-    addEntityWithoutName({'x':x,'y':y,'colour':'black',
-                          'radius':1});
+    addEntityWithoutName({'x':x,'y':y,'colour':'white',
+                          'radius': 1});
 });
 
 
@@ -279,9 +280,11 @@ function update() {
       "method": "GET"
     }
     sendJSONXMLHTTPRequest(url, object, (response) => {
+      // Update world
       world = response;
       drawNext = true;
     });
+    console.log(world)
     drawFrame();
 }
 
